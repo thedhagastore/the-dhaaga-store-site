@@ -26,8 +26,103 @@
 <link rel="preload" as="image" href="/assets/logo.webp" type="image/webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap">
-<link rel="stylesheet" href="/styles.css">
+<link rel="preload" as="image" href="/assets/toys/crab.webp" imagesrcset="/assets/toys/crab-sm.webp 260w, /assets/toys/crab.webp 520w" imagesizes="(max-width: 600px) 140px, 200px" type="image/webp" fetchpriority="high">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap"></noscript>
+<style>
+/* The Dhaaga Store: coming soon. Brand palette only (gold appears solely on the drawn hooks/rings). */
+:root{
+  --ink:#000014; --maroon:#561B10; --cream:#FBFBEF; --mist:#E8ECEE; --white:#FFFFFF;
+  --gold:#C9A24A; --gold-hi:#E9CF86; /* hardware only: hooks + keyrings, per brief */
+  --display:"Fraunces", Georgia, "Times New Roman", serif;
+  --sans:"DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --toy-h:clamp(120px, 24svh, 220px);
+  --toy-w:calc(var(--toy-h) * 0.8667);   /* 520 x 600 artwork */
+  --thread:calc(var(--toy-h) * 0.2);
+  --stand-h:calc(var(--toy-h) * 1.08 + var(--thread) + 40px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow-x:clip}
+body{background:var(--cream);color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.visually-hidden{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.page{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:clamp(14px,2.6svh,28px) 16px clamp(10px,1.8svh,18px);gap:clamp(4px,1.2svh,12px);text-align:center}
+.logo{width:160px;height:auto;display:block}
+@media (max-width:600px){.logo{width:120px}}
+
+/* ---------- rotating stand ---------- */
+.stand{position:relative;width:min(100%,1180px);height:var(--stand-h);flex:0 0 auto;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
+.stand.dragging{cursor:grabbing}
+.scene{position:absolute;inset:0;perspective:1100px;perspective-origin:50% 25%}
+.ring{position:absolute;left:50%;top:36px;width:0;height:0;transform-style:preserve-3d;will-change:transform}
+.rack-top{position:absolute;left:calc(var(--RX) * -1 - 16px);top:calc(var(--RZ) * -1 - 16px);width:calc(var(--RX) * 2 + 32px);height:calc(var(--RZ) * 2 + 32px);
+  border-radius:50%;transform:rotateX(90deg);background:var(--mist);border:4px solid var(--maroon);box-shadow:0 0 0 1px var(--maroon)}
+.rack-top::after{content:"";position:absolute;inset:16% 10%;border-radius:50%;background:var(--cream);border:2px solid var(--mist)}
+.pole{position:absolute;left:-2px;top:-28px;width:4px;height:30px;background:var(--maroon);border-radius:2px}
+.finial{position:absolute;left:-7px;top:-34px;width:14px;height:14px;border-radius:50%;background:var(--maroon)}
+
+.item{position:absolute;left:calc(var(--toy-w) / -2);top:0;width:var(--toy-w);transform-style:preserve-3d;transform-origin:50% 0;will-change:transform}
+.swing{position:relative;transform-origin:50% 0;animation:sway var(--sway-d,3s) ease-in-out var(--sway-delay,0s) infinite alternate}
+@keyframes sway{from{transform:rotate(calc(var(--sway-a,3deg) * -1))}to{transform:rotate(var(--sway-a,3deg))}}
+.hanger{display:block;width:24px;height:calc(var(--thread) + 8px);margin:-6px auto 0;overflow:visible}
+.toy{display:block;position:relative;width:var(--toy-w);height:var(--toy-h);margin-top:calc(var(--toy-h) * var(--hang, .0233) * -1 - 4px);padding:0;border:0;background:none;cursor:pointer;
+  border-radius:18px;transform-origin:50% 0;transition:transform .45s cubic-bezier(.2,.8,.2,1);-webkit-tap-highlight-color:transparent}
+.toy img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
+.item.is-back .toy{filter:blur(1.4px)}
+.item.is-active .toy{transform:scale(1.12)}
+.toy:focus-visible{outline:3px solid var(--maroon);outline-offset:2px}
+.rail{display:none}
+
+/* label under the stand, styled after the "NAME — DROP" caption in the reference */
+.toy-label{margin:0;min-height:1.6em;font:500 13px/1.6 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.toy-label .hint{letter-spacing:.02em;text-transform:none;color:rgba(0,0,20,.68);font-weight:400}
+.toy-label b{font-weight:500}
+.toy-label .sep{color:var(--maroon);padding:0 .5em}
+
+/* ---------- copy + CTA ---------- */
+.copy{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2svh,12px)}
+.headline{margin:0;font:500 clamp(40px,7.2svh,72px)/1 var(--display);letter-spacing:-.01em;color:var(--ink)}
+.headline::first-letter{font-style:italic;color:var(--maroon)}
+.subline{margin:0;max-width:34ch;font-size:clamp(15px,2svh,18px);color:rgba(0,0,20,.78)}
+.cta{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 30px;margin-top:4px;border-radius:999px;
+  background:var(--maroon);color:var(--cream);font:500 16px/1 var(--sans);letter-spacing:.02em;text-decoration:none;
+  box-shadow:0 6px 18px -8px rgba(86,27,16,.55);transition:background-color .2s,transform .2s,box-shadow .2s}
+.cta:hover{background:var(--ink);transform:translateY(-2px);box-shadow:0 10px 22px -10px rgba(0,0,20,.6)}
+.cta:active{transform:translateY(0)}
+.cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.footer{font-size:13px;color:rgba(0,0,20,.68)}
+
+/* ---------- focused view ---------- */
+.focus-view{width:min(92vw,460px);max-height:92svh;padding:28px 24px 30px;border:0;border-radius:28px;background:var(--white);color:var(--ink);
+  box-shadow:0 30px 80px -30px rgba(0,0,20,.35);overflow:auto}
+.focus-view::backdrop{background:rgba(251,251,239,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.focus-view[open]{animation:pop .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.focus-body{text-align:center}
+.focus-body img{width:min(100%,300px);height:auto;display:block;margin:0 auto 8px}
+.focus-body h2{margin:0;font:500 clamp(30px,5vw,38px)/1.1 var(--display)}
+.focus-soon{margin:6px 0 0;font:500 13px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--maroon)}
+.close{position:absolute;top:12px;right:12px;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--mist);color:var(--ink);cursor:pointer;transition:background-color .2s}
+.close:hover{background:var(--cream)}
+.close:focus-visible{outline:3px solid var(--maroon);outline-offset:2px}
+
+/* ---------- reduced motion: a still, arranged rail ---------- */
+.stand.static{cursor:default}
+.stand.static .scene{position:relative;inset:auto;height:100%;perspective:none;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.stand.static .ring{position:relative;left:auto;top:22px;width:max-content;height:auto;margin:0 auto;padding:0 12px;display:flex;gap:clamp(2px,1vw,12px);transform:none!important;transform-style:flat}
+.stand.static .rack-top,.stand.static .pole,.stand.static .finial{display:none}
+.stand.static .item{position:relative;left:auto;transform:none!important;width:clamp(78px,calc((min(100vw,1180px) - 140px) / 10),calc(var(--toy-w) * .8))}
+.stand.static .toy{width:100%;height:auto;aspect-ratio:520/600;transition:none}
+.stand.static .swing{animation:none}
+.stand.static .item.is-back .toy{filter:none}
+.stand.static .rail{display:block;position:absolute;left:2%;right:2%;top:20px;height:5px;border-radius:3px;background:var(--mist);box-shadow:inset 0 -2px 0 var(--maroon)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+@media (max-width:600px){:root{--toy-h:clamp(120px,20svh,160px);--stand-h:calc(var(--toy-h) * 1.02 + var(--thread) + 34px)}.scene{perspective:620px}}
+@media (max-height:700px) and (min-width:601px){:root{--toy-h:clamp(110px,20svh,170px)}}
+</style>
 <script src="/main.js" defer></script>
 </head>
 <body>

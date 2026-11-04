@@ -46,7 +46,8 @@ const PRODUCTS = [
     el.style.setProperty("--hang", p.hang ?? 0.0233);
     el.innerHTML = `<div class="swing">${hanger}${ringSvg}
       <button class="toy" type="button" data-i="${i}" aria-haspopup="dialog">
-        <img src="${p.img}" alt="${p.alt}" width="520" height="600" decoding="async">
+        <img src="${p.img}" srcset="${p.img.replace(".webp", "-sm.webp")} 260w, ${p.img} 520w" sizes="(max-width: 600px) 140px, 200px"
+             alt="${p.alt}" width="520" height="600" decoding="async" fetchpriority="${i === 0 ? "high" : "low"}">
       </button></div>`;
     ring.appendChild(el);
     return { el, btn: el.querySelector(".toy"), back: null };
