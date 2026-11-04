@@ -16,6 +16,12 @@ Read this first at the start of every loop iteration.
 - Lighthouse (mobile, PageSpeed Insights, 2026-11-04): Performance 99, Accessibility 100, Best Practices 100, SEO 100. Page weight ≈ 0.35 MB.
 - DNS at Namecheap: `www` CNAME → the-dhaaga-store-site.onrender.com (was parkingpage.namecheap.com); `@` URL Redirect removed; `@` A 216.24.57.1 added. Email-forwarding MX + SPF TXT untouched. Both domains verified in Render.
 
+## Update 2026-11-04 (v2)
+- Product photos replaced with 10 AI-generated studio renders (Figma AI, gpt-image), cut out and exported to `assets/toys/` (22–57 KB each). New names: Bun Bun, Froggy, Berry, Inky, Buzz (placeholders, edit in `main.js`).
+- Stand is now a wide oval rack (toys placed on an ellipse each frame). Each toy has a `hang` point so the thread meets it where it naturally hangs.
+- Mobile: oval spreads to the screen edges with deeper perspective so one toy reads clearly at the front. Reduced motion: a straight rail that scrolls sideways inside the stand.
+- Verified: 60 fps, hover/click/Esc/outside click, swipe, no horizontal page scroll, CTA above the fold at 1440×900, 768×1024, 390×844.
+
 ## Pending
 - TLS certificates issuing on Render (were "Pending" at last check).
 

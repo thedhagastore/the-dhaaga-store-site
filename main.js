@@ -1,17 +1,22 @@
 /* The Dhaaga Store: rotating hook display stand.
-   Edit the product list here; everything else reads from it. */
+   Edit the product list here; everything else reads from it.
+   hang = where the thread meets the toy, as a fraction of the 520x600 image height. */
 const PRODUCTS = [
-  { name: "Crabby",    img: "/assets/crab.webp",     alt: "Crabby, a blue crochet crab keychain with a smiling face" },
-  { name: "Tiger Tot", img: "/assets/tiger.webp",    alt: "Tiger Tot, a yellow crochet tiger in green overalls" },
-  { name: "Pengu",     img: "/assets/penguin.webp",  alt: "Pengu, a black and white crochet penguin with orange feet" },
-  { name: "Scoop",     img: "/assets/icecream.webp", alt: "Scoop, a fluffy pink crochet ice-cream cone" },
-  { name: "Pupper",    img: "/assets/puppy.webp",    alt: "Pupper, a tan crochet puppy with floppy brown ears" },
+  { name: "Crabby",    img: "/assets/toys/crab.webp", hang: 0.1683,       alt: "Crabby, a blue crochet crab with heart-shaped claws" },
+  { name: "Tiger Tot", img: "/assets/toys/tiger.webp", hang: 0.0383,      alt: "Tiger Tot, a yellow crochet tiger in green overalls" },
+  { name: "Pengu",     img: "/assets/toys/penguin.webp", hang: 0.0117,    alt: "Pengu, a black and white crochet penguin with orange feet" },
+  { name: "Scoop",     img: "/assets/toys/icecream.webp", hang: 0.0117,   alt: "Scoop, a pink crochet ice-cream cone" },
+  { name: "Pupper",    img: "/assets/toys/puppy.webp", hang: 0.0117,      alt: "Pupper, a tan crochet puppy with floppy brown ears" },
+  { name: "Bun Bun",   img: "/assets/toys/bunny.webp", hang: 0.285,      alt: "Bun Bun, a cream crochet bunny with a red bow" },
+  { name: "Froggy",    img: "/assets/toys/frog.webp", hang: 0.1333,       alt: "Froggy, a round green crochet frog with a big smile" },
+  { name: "Berry",     img: "/assets/toys/strawberry.webp", hang: 0.0117, alt: "Berry, a red crochet strawberry with a happy face" },
+  { name: "Inky",      img: "/assets/toys/octopus.webp", hang: 0.0117,    alt: "Inky, a lavender crochet octopus with curly legs" },
+  { name: "Buzz",      img: "/assets/toys/bee.webp", hang: 0.1583,        alt: "Buzz, a striped crochet bumblebee with white wings" },
 ];
 
 (() => {
   const stand = document.getElementById("stand");
   const ring = document.getElementById("ring");
-  const pole = ring.querySelector(".pole"), finial = ring.querySelector(".finial");
   const label = document.getElementById("toyLabel");
   if (!matchMedia("(hover: hover)").matches) document.getElementById("standHint").textContent = "Swipe to spin · tap a toy for a closer look";
   const hintHTML = label.innerHTML;
@@ -22,7 +27,7 @@ const PRODUCTS = [
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
 
   const N = PRODUCTS.length, STEP = 360 / N;
-  const AUTO_SPEED = 9;          // deg/s: one full turn every 40 s
+  const AUTO_SPEED = 7;          // deg/s: one full turn every ~50 s
   const INTENT_MS = 80;          // hover intent delay (as in the reference rail)
   const RESUME_MS = 1400;        // auto-rotation resumes after a drag/hover ends
 
@@ -38,6 +43,7 @@ const PRODUCTS = [
     el.style.setProperty("--sway-d", (2.6 + (i % 3) * 0.45).toFixed(2) + "s");
     el.style.setProperty("--sway-delay", (-i * 0.73).toFixed(2) + "s");
     el.style.setProperty("--sway-a", (2.4 + (i % 2) * 1.1).toFixed(1) + "deg");
+    el.style.setProperty("--hang", p.hang ?? 0.0233);
     el.innerHTML = `<div class="swing">${hanger}${ringSvg}
       <button class="toy" type="button" data-i="${i}" aria-haspopup="dialog">
         <img src="${p.img}" alt="${p.alt}" width="520" height="600" decoding="async">
@@ -48,27 +54,28 @@ const PRODUCTS = [
 
   // ---------- state ----------
   let angle = 0, vel = 0, mode = "auto", target = 0, active = -1;
-  let R = 200, last = 0, raf = 0, visible = true, resumeT = 0, intentT = 0, drag = null, suppressClick = 0;
+  let RX = 400, RZ = 160, last = 0, raf = 0, visible = true, resumeT = 0, intentT = 0, drag = null, suppressClick = 0;
 
   const norm = a => ((a % 360) + 540) % 360 - 180; // -> [-180,180)
 
   function measure() {
+    // a wide oval rack: RX spans the stand, RZ gives depth
     const w = stand.clientWidth, toyW = items[0].btn.offsetWidth || 150;
-    // keep the side toys inside the stand: R*sin72*~0.9 + toyW*0.45 <= w/2
-    R = Math.round(Math.min((w / 2 - toyW * 0.5) / 0.86, toyW * 1.75));
-    ring.style.setProperty("--R", R + "px");
+    RX = Math.round(w < 600 ? w / 2 + toyW * 0.05 : Math.max(toyW * 0.8, Math.min(w / 2 - toyW * 0.42, 560)));
+    RZ = Math.round(w < 600 ? toyW * 1.6 : Math.max(toyW * 1.05, Math.min(RX * 0.42, 240)));
+    ring.style.setProperty("--RX", RX + "px");
+    ring.style.setProperty("--RZ", RZ + "px");
   }
 
   function render() {
-    ring.style.transform = `translateZ(${-R}px) rotateX(-9deg) rotateY(${angle.toFixed(3)}deg)`;
-    pole.style.transform = finial.style.transform = `rotateY(${(-angle).toFixed(3)}deg)`;
+    ring.style.transform = `translateZ(${-RZ}px) rotateX(-8deg)`;
     let front = 0, best = -2;
     for (let i = 0; i < N; i++) {
-      const a = i * STEP;
-      const d = Math.cos((a + angle) * Math.PI / 180);       // 1 = front, -1 = back
+      const t = (i * STEP + angle) * Math.PI / 180;
+      const d = Math.cos(t);                                   // 1 = front, -1 = back
       const it = items[i];
-      it.el.style.transform = `rotateY(${a}deg) translateZ(${R}px) rotateY(${-(a + angle)}deg) rotateX(9deg)`;
-      it.btn.style.opacity = (0.5 + 0.5 * (d + 1) / 2).toFixed(3);
+      it.el.style.transform = `translate3d(${(RX * Math.sin(t)).toFixed(2)}px,0,${(RZ * d).toFixed(2)}px) rotateX(8deg)`;
+      it.btn.style.opacity = (0.3 + 0.7 * (d + 1) / 2).toFixed(3);
       const back = d < -0.25;
       if (back !== it.back) { it.back = back; it.el.classList.toggle("is-back", back); }
       if (d > best) { best = d; front = i; }
@@ -157,10 +164,10 @@ const PRODUCTS = [
         mode = "drag"; drag.a0 = angle;
       } else return;
     }
-    const k = 160 / Math.max(160, R);              // degrees per px, scaled to stand size
-    angle = drag.a0 + dx * 0.55 * k;
+    const k = 57.3 / RX;                            // degrees per px: the front toy follows the finger
+    angle = drag.a0 + dx * k;
     const now = performance.now();
-    drag.v = 0.7 * drag.v + 0.3 * ((e.clientX - drag.lx) * 0.55 * k) / Math.max(1, (now - drag.lt) / 1000);
+    drag.v = 0.7 * drag.v + 0.3 * ((e.clientX - drag.lx) * k) / Math.max(1, (now - drag.lt) / 1000);
     drag.lx = e.clientX; drag.lt = now;
     if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); });
   });
