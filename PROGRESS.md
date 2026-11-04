@@ -2,26 +2,22 @@
 
 Read this first at the start of every loop iteration.
 
+## Live
+- Site: https://thedhaagastore.com (www → apex redirect, set by Render)
+- Render: https://the-dhaaga-store-site.onrender.com (static site, publish dir `.`, no build command; deployed from the public repo URL)
+- Repo: https://github.com/thedhagastore/the-dhaaga-store-site
+
 ## Done
 - Reference repo reviewed (MIT licensed). Took only the ideas: ~80 ms hover-intent delay, critically damped spring when retargeting, drag-vs-click detection. Code here is original.
 - Assets: 5 toys cut out (rough outline + GrabCut + keyring removal + edge defringe), checked at 2x on dark, green and cream. 520×600 WebP (2x), toy centred, attach point at (260, 14). 25–39 KB each.
 - Logo: only the outer white made transparent (artwork untouched), 360 px WebP. Favicon from the yarn ball. OG image 1200×630, logo on cream.
-- Page: logo → 3D rotating spinner rack (CSS perspective + rotateY, toys billboarded, maroon threads, gold hooks/rings drawn in SVG) → "Coming Soon" → sub-line → Custom Order (WhatsApp, new tab, rel=noopener) → footer.
-- Verified in Playwright: auto-rotation 60 fps (worst frame 17 ms), per-toy pendulum sway, hover → toy turns to front + scales + name label, click → focused dialog, Esc / outside click / close button all close it, mobile swipe rotates then auto-rotation resumes, reduced motion → static rail.
-- Layout verified at 1440×900, 768×1024, 390×844: headline + CTA above the fold, no horizontal scroll, all tap targets ≥ 44 px.
+- Page: logo → 3D rotating spinner rack → "Coming Soon" → sub-line → Custom Order (WhatsApp, new tab, rel=noopener) → footer.
+- Verified in Playwright: 60 fps rotation, per-toy sway, hover → front + scale + name, click → dialog, Esc/outside/close all close it, swipe works, reduced motion → static rail. 1440×900, 768×1024, 390×844: CTA above the fold, no horizontal scroll, tap targets ≥ 44 px, no console errors.
+- Lighthouse (mobile, PageSpeed Insights, 2026-11-04): Performance 99, Accessibility 100, Best Practices 100, SEO 100. Page weight ≈ 0.35 MB.
+- DNS at Namecheap: `www` CNAME → the-dhaaga-store-site.onrender.com (was parkingpage.namecheap.com); `@` URL Redirect removed; `@` A 216.24.57.1 added. Email-forwarding MX + SPF TXT untouched. Both domains verified in Render.
 
-## Failing / pending
-- Lighthouse (mobile): run against the live URL (the build sandbox can't reach the npm registry).
-- Render deploy + custom domains + Namecheap DNS + TLS.
+## Pending
+- TLS certificates issuing on Render (were "Pending" at last check).
 
-## Next
-1. Push to GitHub `the-dhaaga-store-site` (main).
-2. Render static site (publish dir `.`), check the *.onrender.com URL.
-3. Add thedhaagastore.com + www, copy Render's DNS records to Namecheap (keep the email-forwarding MX + SPF TXT).
-4. Lighthouse via PageSpeed Insights; fix anything below Perf 90 / A11y 95.
-
-## DNS at Namecheap before changes (2026-11-04)
-- `@` A 162.255.119.14 (Namecheap redirect/parking)
-- `www` CNAME parkingpage.namecheap.com
-- `@` MX eforward1–5.registrar-servers.com (email forwarding: keep)
-- `@` TXT `v=spf1 include:spf.efwd.registrar-servers.com ~all` (keep)
+## Notes
+- Deployed from the public repo URL, so pushes do not auto-deploy. Redeploy with "Manual Deploy" in Render, or call the service's deploy hook (Render → Settings → Deploy Hook) after pushing.
