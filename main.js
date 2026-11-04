@@ -78,7 +78,7 @@ const PRODUCTS = [
       it.el.style.transform = `translate3d(${(RX * Math.sin(t)).toFixed(2)}px,0,${(RZ * d).toFixed(2)}px) rotateX(8deg)`;
       it.btn.style.opacity = (0.3 + 0.7 * (d + 1) / 2).toFixed(3);
       const back = d < -0.25;
-      if (back !== it.back) { it.back = back; it.el.classList.toggle("is-back", back); }
+      if (back !== it.back) { it.back = back; it.el.classList.toggle("is-back", back); it.el.inert = back; }
       if (d > best) { best = d; front = i; }
     }
     return front;
@@ -214,7 +214,7 @@ const PRODUCTS = [
   // ---------- lifecycle ----------
   function applyMotionPref() {
     stand.classList.toggle("static", reduce.matches);
-    if (reduce.matches) { cancelAnimationFrame(raf); raf = 0; ring.style.transform = ""; items.forEach(it => { it.el.style.transform = ""; it.btn.style.opacity = ""; it.el.classList.remove("is-back"); }); }
+    if (reduce.matches) { cancelAnimationFrame(raf); raf = 0; ring.style.transform = ""; items.forEach(it => { it.el.style.transform = ""; it.btn.style.opacity = ""; it.el.classList.remove("is-back"); it.el.inert = false; it.back = null; }); }
     else { measure(); render(); mode = "auto"; wake(); }
   }
   reduce.addEventListener?.("change", applyMotionPref);

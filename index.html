@@ -67,9 +67,9 @@ body{background:var(--cream);color:var(--ink);font:400 16px/1.5 var(--sans);-web
 .swing{position:relative;transform-origin:50% 0;animation:sway var(--sway-d,3s) ease-in-out var(--sway-delay,0s) infinite alternate}
 @keyframes sway{from{transform:rotate(calc(var(--sway-a,3deg) * -1))}to{transform:rotate(var(--sway-a,3deg))}}
 .hanger{display:block;width:24px;height:calc(var(--thread) + 8px);margin:-6px auto 0;overflow:visible}
-.toy{display:block;position:relative;width:var(--toy-w);height:var(--toy-h);margin-top:calc(var(--toy-h) * var(--hang, .0233) * -1 - 4px);padding:0;border:0;background:none;cursor:pointer;
+.toy{display:block;position:relative;width:calc(var(--toy-w) * .625);margin-left:auto;margin-right:auto;height:var(--toy-h);margin-top:calc(var(--toy-h) * var(--hang, .0233) * -1 - 4px);padding:0;border:0;background:none;cursor:pointer;
   border-radius:18px;transform-origin:50% 0;transition:transform .45s cubic-bezier(.2,.8,.2,1);-webkit-tap-highlight-color:transparent}
-.toy img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
+.toy img{position:absolute;left:-30%;top:0;width:160%;height:100%;max-width:none;display:block;pointer-events:none;-webkit-user-drag:none}
 .item.is-back .toy{filter:blur(1.4px)}
 .item.is-active .toy{transform:scale(1.12)}
 .toy:focus-visible{outline:3px solid var(--maroon);outline-offset:2px}
@@ -114,7 +114,7 @@ body{background:var(--cream);color:var(--ink);font:400 16px/1.5 var(--sans);-web
 .stand.static .ring{position:relative;left:auto;top:22px;width:max-content;height:auto;margin:0 auto;padding:0 12px;display:flex;gap:clamp(2px,1vw,12px);transform:none!important;transform-style:flat}
 .stand.static .rack-top,.stand.static .pole,.stand.static .finial{display:none}
 .stand.static .item{position:relative;left:auto;transform:none!important;width:clamp(78px,calc((min(100vw,1180px) - 140px) / 10),calc(var(--toy-w) * .8))}
-.stand.static .toy{width:100%;height:auto;aspect-ratio:520/600;transition:none}
+.stand.static .toy{width:62.5%;height:auto;aspect-ratio:520/600;transition:none}
 .stand.static .swing{animation:none}
 .stand.static .item.is-back .toy{filter:none}
 .stand.static .rail{display:block;position:absolute;left:2%;right:2%;top:20px;height:5px;border-radius:3px;background:var(--mist);box-shadow:inset 0 -2px 0 var(--maroon)}
