@@ -29,3 +29,9 @@ Read this first at the start of every loop iteration.
 
 ## Notes
 - Deployed from the public repo URL, so pushes do not auto-deploy. Redeploy with "Manual Deploy" in Render, or call the service's deploy hook (Render → Settings → Deploy Hook) after pushing.
+
+## Update 2026-11-09
+- Instagram link (@thedhaaga.store) under the Custom Order button + `sameAs` in structured data.
+- SEO: robots.txt, sitemap.xml, Organization JSON-LD.
+- Google Search Console: domain property thedhaagastore.com verified (account thedhaagastore@gmail.com) via Namecheap TXT `@` google-site-verification=…; sitemap submitted; indexing requested for the homepage.
+- dhaagastore.com belongs to an unrelated business (GoDaddy/Netlify) and was not touched.
